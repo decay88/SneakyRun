@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExecuteKatz", "ExecuteKatz\ExecuteKatz.csproj", "{B9BB2218-25D1-4489-A2A3-D5F2BDF45CBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KatzAssembly", "KatzAssembly\KatzAssembly.csproj", "{EDDE36B6-536B-4383-83B3-A0E06B57AD32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewApproach", "NewApproach\NewApproach.csproj", "{8D82FA84-A295-4B8B-A2C1-A2163FAC072F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EDDE36B6-536B-4383-83B3-A0E06B57AD32} = {EDDE36B6-536B-4383-83B3-A0E06B57AD32}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B9BB2218-25D1-4489-A2A3-D5F2BDF45CBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9BB2218-25D1-4489-A2A3-D5F2BDF45CBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9BB2218-25D1-4489-A2A3-D5F2BDF45CBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9BB2218-25D1-4489-A2A3-D5F2BDF45CBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDDE36B6-536B-4383-83B3-A0E06B57AD32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDDE36B6-536B-4383-83B3-A0E06B57AD32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDDE36B6-536B-4383-83B3-A0E06B57AD32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDDE36B6-536B-4383-83B3-A0E06B57AD32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D82FA84-A295-4B8B-A2C1-A2163FAC072F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D82FA84-A295-4B8B-A2C1-A2163FAC072F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D82FA84-A295-4B8B-A2C1-A2163FAC072F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D82FA84-A295-4B8B-A2C1-A2163FAC072F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C6A5060D-A737-445C-AFCC-832C70E2F1A5}
+	EndGlobalSection
+EndGlobal
