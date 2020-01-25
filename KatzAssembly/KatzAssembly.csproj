@@ -110,7 +110,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <EmbeddedResource Include="Resources\Win32mimikatz.enc" />
     <EmbeddedResource Include="Resources\x64mimikatz.enc" />
   </ItemGroup>
