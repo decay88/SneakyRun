@@ -118,7 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="mimikatz_trunk_zip_enc" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\mimikatz_trunk.zip.enc.b64;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Win32powerkatz" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Win32powerkatz.enc;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="x64powerkatz" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\x64powerkatz.enc;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

@@ -49,7 +49,8 @@ namespace SSploit.Execution
         /// The DOS header
         private IMAGE_DOS_HEADER dosHeader;
         //Primary class for loading PE
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate bool main(IntPtr arg1, uint arg2, IntPtr lparam);
 
         private static IntPtr codebase;

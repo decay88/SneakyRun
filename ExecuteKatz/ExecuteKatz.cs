@@ -14,7 +14,7 @@ namespace ExecuteKatz
             //KatzAssembly.Program.Main(); //- создаст b64 из архива mimikatz
 
             Console.WriteLine( NonInteractiveKatz.NonInteractiveKatz.Coffee());
-            KatzAssembly.Katz.Exec(false);
+            //KatzAssembly.Katz.Exec();
             Console.ReadLine();
         }
     }

