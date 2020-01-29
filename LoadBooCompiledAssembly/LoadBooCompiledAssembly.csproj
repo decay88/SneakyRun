@@ -32,6 +32,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Boo.Lang">
+      <HintPath>..\Boo\Boo.Lang.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Boo.Lang.Compiler">
+      <HintPath>..\Boo\Boo.Lang.Compiler.dll</HintPath>
+    </Reference>
+    <Reference Include="Boo.Lang.Parser">
+      <HintPath>..\Boo\Boo.Lang.Parser.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
