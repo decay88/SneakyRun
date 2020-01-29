@@ -9,11 +9,13 @@ using Boo.Lang.Compiler.Pipelines;
 
 namespace LoadBooCompiledAssembly
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
             
+
+
             AppDomain ad = AppDomain.CreateDomain("Test");
             Console.WriteLine("new AppDomain \"Test\" was created");
 
@@ -22,7 +24,10 @@ namespace LoadBooCompiledAssembly
                 typeof(Loader).Assembly.FullName,
                 typeof(Loader).FullName);
 
+            
 
+            loader.LoadAssembly(Assembly.GetExecutingAssembly());
+            loader.ExecuteStaticMethod("LoadBooCompiledAssembly.Program", "Method", new object[] { "Tag" });
 
             //loader.LoadAssembly(Properties.Resources.KatzAssembly);
 
@@ -36,15 +41,18 @@ namespace LoadBooCompiledAssembly
             GC.WaitForFullGCComplete();
             Console.WriteLine("Appdomain cleared");
             Console.ReadLine();
-            
+            /*
+            */
+        }
+
+        public static void Method(string write)
+        {            
             BooCompiler compiler = new BooCompiler();
             compiler.Parameters.Input.Add(new FileInput(@"..\..\script.boo"));
-            
+
             compiler.Parameters.Pipeline = new CompileToMemory();
             compiler.Parameters.Ducky = true;
             compiler.Parameters.GenerateInMemory = true;
-
-            
 
             CompilerContext context = compiler.Run();
             //Note that the following code might throw an error if the Boo script had bugs.
@@ -53,7 +61,7 @@ namespace LoadBooCompiledAssembly
             {
                 Type scriptModule = context.GeneratedAssembly.GetType("ScriptModule");
                 MethodInfo stringManip = scriptModule.GetMethod("stringManip");
-                string output = (string)stringManip.Invoke(null, new object[] { "Tag" });
+                string output = (string)stringManip.Invoke(null, new object[] { write });
                 Console.WriteLine(output);
             }
             else
@@ -61,6 +69,8 @@ namespace LoadBooCompiledAssembly
                 foreach (CompilerError error in context.Errors)
                     Console.WriteLine(error);
             }
+            Console.ReadLine();
+
         }
     }
     class Loader : MarshalByRefObject
@@ -82,6 +92,10 @@ namespace LoadBooCompiledAssembly
             _assembly = Assembly.Load(bytes);
         }
 
+        public void LoadAssembly(Assembly assembly)
+        {
+            _assembly = Assembly.Load(assembly.GetName());
+        }
 
         public object ExecuteStaticMethod(string typeName, string methodName, params object[] parameters)
         {
