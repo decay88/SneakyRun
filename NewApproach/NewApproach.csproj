@@ -102,10 +102,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\NonInteractiveMimikatz.dll" />
+    <None Include="Resources\KatzAssembly.dll" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\KatzAssembly.dll" />
+    <None Include="Resources\NonInteractiveMimikatz.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

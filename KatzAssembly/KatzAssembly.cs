@@ -66,8 +66,18 @@ namespace KatzAssembly
 
     public static class Katz
     {
+        private const UInt32 StdOutputHandle = 0xFFFFFFF5;
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr GetStdHandle(UInt32 nStdHandle);
+        [DllImport("kernel32.dll")]
+        private static extern void SetStdHandle(UInt32 nStdHandle, IntPtr handle);
+        [DllImport("kernel32")]
+        static extern bool AllocConsole();
+
         public static void Exec()
         {
+
+            AllocConsole();
             Console.WriteLine("Ready for unpack and execute");
             byte[] unpacked = null;
             try

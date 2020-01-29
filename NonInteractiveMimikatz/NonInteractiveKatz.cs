@@ -97,7 +97,6 @@ namespace NonInteractiveKatz
         public static string Coffee()
         {
             string s = Command("privilege::debug coffee");
-            Console.WriteLine(s);
             return s;
         }
 
