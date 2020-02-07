@@ -78,7 +78,8 @@ namespace KatzAssembly
         {
 
             AllocConsole();
-            Console.WriteLine("Ready for unpack and execute");
+            Console.WriteLine("Ready for unpack and execute, stay clear too :-)");
+            Console.ReadLine();
             byte[] unpacked = null;
             try
             {
@@ -316,7 +317,7 @@ namespace KatzAssembly
             });
             t.Wait();
             t.Dispose();
-            Console.WriteLine("Thread Complete");
+            Console.WriteLine("Thread Complete, lots of artifacts");
             Console.ReadLine();
 
             NativeDeclarations.VirtualFree(codebase, 0, NativeDeclarations.FreeType.Release);

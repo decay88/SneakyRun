@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -15,7 +16,9 @@ namespace NewApproach
         public static void InteractiveMiMi()
         {
             AppDomain ad = AppDomain.CreateDomain("Test");
-            Console.WriteLine("new AppDomain \"Test\" was created");
+            Console.WriteLine("My Pid {0}", Process.GetCurrentProcess().Id);
+            Console.WriteLine("new AppDomain \"Test\" was created, stay cleared");
+            Console.ReadLine();
 
             // Loader lives in another AppDomain
             Loader loader = (Loader)ad.CreateInstanceAndUnwrap(
@@ -25,7 +28,7 @@ namespace NewApproach
             loader.LoadAssembly(Properties.Resources.KatzAssembly);
 
             var t = Task.Run(() => {
-                loader.ExecuteStaticMethod("KatzAssembly.Katz", "ExecInternal");
+                loader.ExecuteStaticMethod("KatzAssembly.Katz", "Exec");
             });
 
             t.Wait();
@@ -36,7 +39,7 @@ namespace NewApproach
             ad = null;
             GC.Collect();
             GC.WaitForFullGCComplete();
-            Console.WriteLine("Appdomain cleared");
+            Console.WriteLine("Appdomain cleared, no any artifacts, but app still running");
             Console.ReadLine();
         }
 
@@ -72,8 +75,8 @@ namespace NewApproach
 
         static void Main(string[] args)
         {
-            NonInteractiveMiMi();
-            //InteractiveMiMi();
+            //NonInteractiveMiMi();
+            InteractiveMiMi();
         }
 
         static byte[] loadFile(string filename)
