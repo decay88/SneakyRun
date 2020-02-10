@@ -78,7 +78,7 @@ namespace KatzAssembly
         {
 
             AllocConsole();
-            Console.WriteLine("Ready for unpack and execute, stay clear too :-)");
+            Console.WriteLine("Ready for unpack and execute, stay clear too, because payload not decrypted :-)");
             Console.ReadLine();
             byte[] unpacked = null;
             try
@@ -321,9 +321,9 @@ namespace KatzAssembly
             Console.ReadLine();
 
             NativeDeclarations.VirtualFree(codebase, 0, NativeDeclarations.FreeType.Release);
-
-
-            Console.WriteLine("Free memory");
+            
+            Console.WriteLine("We just freed memory, that allocated manually.");
+            Console.WriteLine("We MUST clear memory that was allocated manually, to remove inmemory artifacts");
             Console.ReadLine();
 
         } //End Main

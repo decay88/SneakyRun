@@ -17,7 +17,7 @@ namespace NewApproach
         {
             AppDomain ad = AppDomain.CreateDomain("Test");
             Console.WriteLine("My Pid {0}", Process.GetCurrentProcess().Id);
-            Console.WriteLine("new AppDomain \"Test\" was created, stay cleared");
+            Console.WriteLine("new AppDomain \"Test\" was created, stay clear");
             Console.ReadLine();
 
             // Loader lives in another AppDomain
@@ -33,6 +33,9 @@ namespace NewApproach
 
             t.Wait();
             t.Dispose();
+            Console.WriteLine("Appdomain \"Test\" finished its work (no active thread)");
+            Console.WriteLine("But still alive and store some artifacts");
+            Console.WriteLine("We should do memory scan NOW, when resive module=>assembly=>appdomain unload events to collect&detect memory artifacts, before GC clear em");
             Console.WriteLine("Press enter to clear Appdomain");
             Console.ReadLine();
             AppDomain.Unload(ad);
