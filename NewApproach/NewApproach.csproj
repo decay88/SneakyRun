@@ -102,10 +102,16 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\IV.bin" />
     <None Include="Resources\KatzAssembly.dll" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\key.bin" />
     <None Include="Resources\NonInteractiveMimikatz.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>copy $(SolutionDir)mimikatz_trunk\Win32mimikatz.enc $(ProjectDir)Resources\Win32mimikatz.enc
+copy $(SolutionDir)mimikatz_trunk\x64mimikatz.enc $(ProjectDir)Resources\x64mimikatz.enc</PreBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -6,13 +6,20 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExecuteKatz", "ExecuteKatz\ExecuteKatz.csproj", "{B9BB2218-25D1-4489-A2A3-D5F2BDF45CBB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KatzAssembly", "KatzAssembly\KatzAssembly.csproj", "{EDDE36B6-536B-4383-83B3-A0E06B57AD32}"
+	ProjectSection(ProjectDependencies) = postProject
+		{830C2803-20E1-4E04-B363-1D932730B891} = {830C2803-20E1-4E04-B363-1D932730B891}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewApproach", "NewApproach\NewApproach.csproj", "{8D82FA84-A295-4B8B-A2C1-A2163FAC072F}"
 	ProjectSection(ProjectDependencies) = postProject
+		{FC07B304-629E-4E74-8740-4CA68EF7E6F5} = {FC07B304-629E-4E74-8740-4CA68EF7E6F5}
 		{EDDE36B6-536B-4383-83B3-A0E06B57AD32} = {EDDE36B6-536B-4383-83B3-A0E06B57AD32}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NonInteractiveKatz", "NonInteractiveMimikatz\NonInteractiveKatz.csproj", "{FC07B304-629E-4E74-8740-4CA68EF7E6F5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{830C2803-20E1-4E04-B363-1D932730B891} = {830C2803-20E1-4E04-B363-1D932730B891}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crypt", "Crypt\Crypt.csproj", "{830C2803-20E1-4E04-B363-1D932730B891}"
 EndProject

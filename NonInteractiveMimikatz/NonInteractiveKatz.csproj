@@ -116,8 +116,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <EmbeddedResource Include="Resources\Win32powerkatz.enc" />
-    <EmbeddedResource Include="Resources\x64powerkatz.enc" />
+    <None Include="Resources\IV.bin" />
+    <None Include="Resources\key.bin" />
+    <None Include="Resources\Win32powerkatz.enc" />
+    <None Include="Resources\x64powerkatz.enc" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -126,4 +128,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>copy $(SolutionDir)mimikatz_trunk\IV.bin $(ProjectDir)Resources\IV.bin
+copy $(SolutionDir)mimikatz_trunk\key.bin $(ProjectDir)Resources\key.bin
+copy $(SolutionDir)mimikatz_trunk\Win32powerkatz.enc $(ProjectDir)Resources\Win32powerkatz.enc
+copy $(SolutionDir)mimikatz_trunk\x64powerkatz.enc $(ProjectDir)Resources\x64powerkatz.enc</PreBuildEvent>
+  </PropertyGroup>
 </Project>

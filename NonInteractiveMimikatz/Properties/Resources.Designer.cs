@@ -63,6 +63,26 @@ namespace NonInteractiveMimikatz.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
+        internal static byte[] IV {
+            get {
+                object obj = ResourceManager.GetObject("IV", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
+        internal static byte[] key {
+            get {
+                object obj = ResourceManager.GetObject("key", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Byte[].
+        /// </summary>
         internal static byte[] Win32powerkatz {
             get {
                 object obj = ResourceManager.GetObject("Win32powerkatz", resourceCulture);
